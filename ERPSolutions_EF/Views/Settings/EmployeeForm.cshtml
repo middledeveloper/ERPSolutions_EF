@@ -1,0 +1,101 @@
+﻿@model ERPSolutions_EF.ViewModels.PermissionsViewModel
+
+@{
+    ViewBag.Title = "Разрешения пользователя";
+    Layout = "~/Views/Shared/Layout.cshtml";
+}
+
+@using (Html.BeginForm("SaveEmployeeForm", "Settings", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.Id)
+
+    <div class="col-md-8 col-md-offset-2">
+        <div class="col-md-12" style="padding: 2em 0 2em 0;">
+            <h4 class="text-primary">Аккаунт пользователя</h4>
+            @Html.TextBoxFor(model => model.Account, new { @class = "form-control", placeholder = "доменная учетная запись" })
+            @Html.ValidationMessageFor(model => model.Account)
+        </div>
+        <h4 class="text-primary">Разрешения пользователя</h4>
+        <table class="col-md-12 table small">
+            <tr>
+                <th class="col-md-6">Роль</th>
+                <th class="col-md-6 text-left">Разрешения</th>
+            </tr>
+            <tr>
+                <td>Административная рассылка</td>
+                <td class="text-left">
+                    @Html.CheckBoxFor(model => model.SendMail)
+                </td>
+            </tr>
+            <tr>
+                <td>Инициатор</td>
+                <td class="text-left">
+                    @Html.CheckBoxFor(model => model.Author)
+                </td>
+            </tr>
+            <tr>
+                <td>Тестировщик</td>
+                <td class="text-left">
+                    @Html.CheckBoxFor(model => model.Tester)
+                </td>
+            </tr>
+            <tr>
+                <td>Согласующий</td>
+                <td class="text-left">
+                    @{ foreach (var res in Model.ResourceRepo)
+                        {
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox"
+                                           name="SelectedApproveResources"
+                                           value="@res.Id"
+                                           @if (Model.SelectedApproveResources.Contains(res.Id)) { <text> checked </text> } />
+                                    @res.Title
+                                </label>
+                            </div>
+                        }
+
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>Исполнитель</td>
+                <td class="text-left">
+                    @{ foreach (var res in Model.ResourceRepo)
+                        {
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox"
+                                           name="SelectedPerformResources"
+                                           value="@res.Id"
+                                           @if (Model.SelectedPerformResources.Contains(res.Id)) { <text> checked </text> } />
+                                    @res.Title
+                                </label>
+                            </div>
+                        }
+
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td>Администратор</td>
+                <td class="text-left">
+                    @Html.CheckBoxFor(model => model.Administrator)
+                </td>
+            </tr>
+        </table>
+        <div class="col-md-6 col-md-offset-6" style="padding: 2em 0 2em 0;">
+            <input type="submit" class="form-control btn btn-default input-sm" style="margin: 0.2em;" value="Сохранить" />
+            @if (Model.Id != 0)
+            {
+                @Html.ActionLink("Удалить", "RemoveEmployee", "Settings", 
+                    new { employeeId = Model.Id }, 
+                    new { @class = "form-control btn btn-default input-sm", style = "margin: 0.2em;" })
+            }
+            @Html.ActionLink("Отмена", "Index", "Settings", 
+                null, 
+                new { @class = "form-control btn btn-default input-sm", style = "margin: 0.2em;" })
+        </div>
+    </div>
+}

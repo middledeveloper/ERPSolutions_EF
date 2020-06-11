@@ -1,0 +1,38 @@
+﻿@model ERPSolutions_EF.ViewModels.ApproveViewModel
+
+@{
+    ViewBag.Title = "Согласование заявок";
+    Layout = "~/Views/Shared/Layout.cshtml";
+}
+
+<h4 class="text-primary">Заявки на согласовании</h4>
+@if (Model.ApprovalTickets.Count() > 0)
+{
+    @Html.Partial("_ApproveTicketList", Model.ApprovalTickets)
+}
+else
+{
+    <h5 class="text-success">Заявок на согласовании нет</h5>
+}
+
+<h4 class="text-primary">Заявки на исполнении</h4>
+@if (Model.PerformingTickets.Count() > 0)
+{
+    @Html.Partial("_AssignTicketList", Model.PerformingTickets)
+}
+else
+{
+    <h5 class="text-success">Заявок на исполнении нет</h5>
+}
+
+<h4 class="text-primary">Закрытые заявки</h4>
+@if (Model.ClosedTickets.Count() > 0)
+{
+    @Html.Partial("_DefaultTicketList", Model.ClosedTickets)
+}
+else
+{
+    <h5 class="text-success">Закрытых заявок за последний месяц нет</h5>
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/active-icons.js")"></script>

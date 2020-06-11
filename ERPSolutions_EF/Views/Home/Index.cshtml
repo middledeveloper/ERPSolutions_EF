@@ -1,0 +1,177 @@
+﻿@model ERPSolutions_EF.ViewModels.InitiateViewModel
+
+<script type="text/javascript">
+    $(function () {
+        $("#PriorityId option[value='@Model.PriorityId']")
+            .attr('selected', 'selected');
+
+        $("#TesterId option[value='@Model.AuthorId']")
+            .attr('selected', 'selected');
+
+        if ($('#ResourceId').val() === '2') {
+            $('#ForProduction').show();
+        }
+
+        if ($('#PriorityId').val() === '1') {
+            $('#HighPriority').show();
+        }
+
+        $('#ResourceId').on('change', function () {
+            if (this.value === '2') {
+                $('#ForProduction').show();
+            }
+            else {
+                $('#ForProduction').hide();
+            }
+        });
+
+        $('#PriorityId').on('change', function () {
+            if (this.value === '1') {
+                $('#HighPriority').show();
+            }
+            else {
+                $('#HighPriority').hide();
+            }
+        });
+    });
+</script>
+
+@{
+    ViewBag.Title = "Создание заявки";
+    Layout = "~/Views/Shared/Layout.cshtml";
+}
+
+<h4 class="text-primary">Проблемные заявки</h4>
+@if (Model.TroubleTickets.Count > 0)
+{
+    @Html.Partial("_TroubleTicketList", Model.TroubleTickets)
+}
+else
+{
+    <h5 class="text-success">Проблемных заявок нет</h5>
+}
+
+<h4 class="text-primary">Заявки в работе</h4>
+@if (Model.ActiveTickets.Count > 0)
+{
+    @Html.Partial("_DefaultTicketList", Model.ActiveTickets)
+}
+else
+{
+    <h5 class="text-success">Заявок в работе нет</h5>
+}
+
+<h4 id="move-here" style="padding-top: 2em;"><strong>@Model.AuthorName.Split(' ')[1]</strong>,
+    заполните поля для создания заявки:</h4>
+@using (Html.BeginForm("AddTicket", "Home", FormMethod.Post))
+{
+    @Html.HiddenFor(x => x.AuthorId)
+    @Html.HiddenFor(x => x.AuthorName)
+
+    @Html.AntiForgeryToken()
+
+    <table class="table">
+        @Html.ValidationSummary(true)
+        <tr>
+            <td class="col-sm-6 col-md-4 col-lg-4"><label>Информационная система</label></td>
+            <td class="col-sm-6 col-md-8 col-lg-8">
+                @Html.DropDownListFor(model => model.ResourceId,
+                    new SelectList(Model.Resources, "Id", "Title", @Model.ResourceId),
+                    new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td><label>Требуемое действие</label></td>
+            <td>
+                @Html.DropDownListFor(model => model.OperationId,
+               new SelectList(@Model.Operations, "Id", "Title", @Model.OperationId),
+                new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td><label>Номера решений <span style="color:red;">*</span></label></td>
+            <td>
+                @Html.TextBoxFor(model => model.Solutions, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Solutions)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Ссылка на ТЗ</label><br />
+                <span style="font-size: 9pt; font-style: italic;">файл на диске R:\</span>
+            </td>
+            <td>
+                @Html.TextBoxFor(model => model.TechnicalTask, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Краткое описание решений <span style="color:red;">*</span></label><br />
+                <span style="font-size: 9pt; font-style: italic;">краткое описание изменений, 
+                вносимых решением в систему</span>
+            </td>
+            <td>
+                @Html.TextBoxFor(model => model.Desc, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.Desc)
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Подробное описание</label><br />
+                <span style="font-size: 9pt; font-style: italic;">ссылка на задачу в SM, RM, JIRA, 
+                Infor xTreme. Перечислить все ссылки</span>
+            </td>
+            <td>
+                @Html.TextAreaFor(model => model.FullDesc, 4, 1, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td><label>Дополнительные инструкции по установке</label></td>
+            <td>
+                @Html.TextAreaFor(model => model.Instructions, 4, 1, new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td><label>Класс срочности</label></td>
+            <td>
+                @Html.DropDownListFor(model => model.PriorityId,
+                new SelectList(@Model.Priorities, "Id", "Title", Model.PriorityId),
+                new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr id="HighPriority" style="display: none;">
+            <td><label>Краткое обоснование срочности <span style="color:red;">*</span></label></td>
+            <td>
+                @Html.TextBoxFor(model => model.PriorityDesc, new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.PriorityDesc)
+            </td>
+        </tr>
+        <tr id="ForProduction" style="display: none;">
+            <td>
+                <label>Кем протестировано</label><br />
+                <span style="font-size: 9pt; font-style: italic;">только для установки на рабочий сервер</span>
+            </td>
+            <td>
+                @Html.DropDownListFor(model => model.TesterId,
+                new SelectList(@Model.Testers, "Id", "Name"),
+                new { @class = "form-control" })
+            </td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+            <td><input type="submit" value="Отправить" class="btn btn-default form-control" /></td>
+        </tr>
+    </table>
+}
+
+<h4 class="text-primary">Закрытые заявки</h4>
+@if (Model.ClosedTickets.Count > 0)
+{
+    @Html.Partial("_DefaultTicketList", Model.ClosedTickets)
+}
+else
+{
+    <h5 class="text-success">Закрытых заявок за последний месяц нет</h5>
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/active-icons.js")"></script>

@@ -1,0 +1,15 @@
+﻿
+@{
+    ViewBag.Title = "Заявка отправлена!";
+    Layout = "~/Views/Shared/Layout.cshtml";
+}
+
+<script type="text/javascript">
+    $(function () {
+        window.location.replace('@Url.Action("Index", "Home")')
+    }, 5000);
+</script>
+
+<h2>Заявка отправлена!</h2>
+Перенаправление на главную страницу...
+

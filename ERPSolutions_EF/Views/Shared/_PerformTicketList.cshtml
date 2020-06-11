@@ -1,0 +1,169 @@
+﻿@model IEnumerable<ERPSolutions_EF.Models.Ticket>
+
+@if (Model != null && Model.Count() > 0)
+{
+    <table class="table table-condensed" style="font-size: 9pt;">
+        <tr>
+            <th><label>Класс</label></th>
+            <th><label>Действие</label></th>
+            <th><label>Ресурс</label></th>
+            <th><label>Создано</label></th>
+            <th><label>Решение</label></th>
+            <th><label>Описание</label></th>
+            <th><label>Тестировщик</label></th>
+            <th><label>Автор</label></th>
+            <th><label>Согласовано</label></th>
+            <th><label>Согласующий</label></th>
+            <th><label>Исполнено</label></th>
+            <th><label>Исполнитель</label></th>
+            <th><label>Статус</label></th>
+            <th></th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            var has_instructions = item.Instructions != null ? true : false;
+            var has_fullDesc = item.FullDesc != null ? true : false;
+            var has_comments = item.ApproverComments.Count > 0 || item.PerformerComments.Count > 0 ? true : false;
+            <tr>
+                <td style="font-weight: bold;">
+                    <kbd class="bg-primary" style="font-size: 12pt;">@Html.DisplayFor(modelItem => item.Priority.Literal)</kbd>
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Operation.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Resource.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Created)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Solutions)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Desc)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tester.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Author.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Approved)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Approver.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Performed)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Performer.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status.Title)
+                </td>
+                <td>
+                    @if (has_fullDesc)
+                    {
+                        <span fulldesc-id="@item.Id" class="glyphicon glyphicon-book fulldesc-icon text-primary"></span>
+                    }
+                    @if (has_instructions)
+                    {
+                        <span instruction-id="@item.Id" class="glyphicon glyphicon-info-sign instructions-icon text-primary"></span>
+                    }
+                    @if (has_comments)
+                    {
+                        <span comment-id="@item.Id" class="glyphicon glyphicon-comment comments-icon text-primary"></span>
+                    }
+                </td>
+            </tr>
+            if (has_fullDesc)
+            {
+                <tr id="fulldesc_@item.Id" class="fulldesc-content">
+                    <td colspan="14">
+                        <div>
+                            <div><strong>Подробное описание:</strong></div>
+                            <div>@item.FullDesc</div>
+                        </div>
+                    </td>
+                </tr>
+            }
+            if (has_instructions)
+            {
+                <tr id="instructions_@item.Id" class="instructions-content">
+                    <td colspan="14">
+                        <div>
+                            <div><strong>Дополнительные инструкции по установке:</strong></div>
+                            <div>@item.Instructions</div>
+                        </div>
+                    </td>
+                </tr>
+            }
+            if (has_comments)
+            {
+                <tr id="comments_@item.Id" class="comments-content">
+                    <td colspan="14">
+                        <div>
+                            @if (item.ApproverComments.Count > 0)
+                            {
+                                <div><strong>Комментарии по согласованию:</strong></div>
+                                foreach (var comment in item.ApproverComments)
+                                {
+                                    <div><b class="text-primary">@comment.Text</b> (@comment.Date, @comment.Author.Name)</div>
+                                    if (comment.Answer != null)
+                                    {
+                                        <div><b class="text-success">@comment.Answer</b> (@item.Author.Name)</div>
+                                    }
+                                }
+                            }
+                            @if (item.PerformerComments.Count > 0)
+                            {
+                                <div><strong>Комментарии по исполнению:</strong></div>
+                                foreach (var comment in item.PerformerComments)
+                                {
+                                    <div><b class="text-primary">@comment.Text</b> (@comment.Date, @comment.Author.Name)</div>
+                                    if (comment.Answer != null)
+                                    {
+                                        <div><b class="text-success">@comment.Answer</b> (@item.Author.Name)</div>
+                                    }
+                                }
+                            }
+                        </div>
+                    </td>
+                </tr>
+            }
+            <tr>
+                @using (Html.BeginForm("Process", "Perform", new { ticketId = item.Id }, FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+
+                    if (item.PerformerId == null)
+                    {
+                        <td colspan="8">
+                            @Html.TextArea("comment", null, 3, 1, new { @class = "form-control", style = "margin: 0.2em;", placeholder = "Ваш комментарий..." })
+                        </td>
+                        <td colspan="6">
+                            <input type="submit" value="Взять в работу" name="assign" class="form-control btn btn-default input-sm" style="margin: 0.2em;" />
+                        </td>
+                    }
+                    else if (item.PerformerId == (int)Session["performerId"])
+                    {
+                        <td colspan="8">
+                            @Html.TextArea("comment", null, 3, 1, new { @class = "form-control", style = "margin: 0.2em;", placeholder = "Ваш комментарий..." })
+                        </td>
+                        <td colspan="6">
+                            <input type="submit" value="Выполнено" name="perform" class="form-control btn btn-default input-sm" style="margin: 0.2em;" />
+                            @if (item.StatusId != (int)ERPSolutions_EF.Models.Enums.Statuses.HOLD)
+                            {
+                                <input type="submit" value="Пауза" name="hold" class="form-control btn btn-default input-sm" style="margin: 0.2em;" />
+                            }
+                            <input type="submit" value="Отклонить" name="decline" class="form-control btn btn-default input-sm" style="margin: 0.2em;" />
+                        </td>
+                    }
+                }
+            </tr>
+        }
+    </table>
+}

@@ -1,0 +1,109 @@
+﻿@model ERPSolutions_EF.Models.Ticket
+
+@{
+    ViewBag.Title = "Доработка заявки";
+    Layout = "~/Views/Shared/Layout.cshtml";
+
+    var has_comments = Model.ApproverComments.Count > 0 ? true : false;
+}
+
+@using (Html.BeginForm("Reapprove", "Home", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(x => x.Id)
+    @Html.HiddenFor(x => x.Solutions)
+
+    <table class="table table-condensed" style="font-size: 9pt;">
+        <tr>
+            <th><label>Срочность</label></th>
+            <th><label>Действие</label></th>
+            <th><label>Ресурс</label></th>
+            <th><label>Создано</label></th>
+            <th><label>Решение</label></th>
+            <th><label>Тестировщик</label></th>
+            <th><label>Автор</label></th>
+            <th><label>Согласующий</label></th>
+            <th><label>Статус</label></th>
+            <th></th>
+        </tr>
+
+        <tr>
+            <td style="font-weight: bold;">@Html.DisplayFor(modelItem => Model.Priority.Literal)</td>
+            <td>@Html.DisplayFor(modelItem => Model.Operation.Title)</td>
+            <td>@Html.DisplayFor(modelItem => Model.Resource.Title)</td>
+            <td>@Html.DisplayFor(modelItem => Model.Created)</td>
+            <td>@Html.DisplayFor(modelItem => Model.Solutions)</td>
+            <td>@Html.DisplayFor(modelItem => Model.Tester.Name)</td>
+            <td>@Html.DisplayFor(modelItem => Model.Author.Name)</td>
+            <td>@Html.DisplayFor(modelItem => Model.Approver.Name)</td>
+            <td>@Html.DisplayFor(modelItem => Model.Status.Title)</td>
+        </tr>
+        @if (has_comments)
+        {
+            <tr id="comments_@Model.Id" class="comments-content">
+                <td colspan="10">
+                    <div>
+                        @if (Model.ApproverComments.Count > 0)
+                        {
+                            <div><strong>Комментарии по согласованию:</strong></div>
+                            foreach (var comment in Model.ApproverComments)
+                            {
+                                <div><b class="text-primary">@comment.Text</b> (@comment.Date, @comment.Author.Name)</div>
+                                if (comment.Answer != null)
+                                {
+                                    <div><b class="text-success">@comment.Answer</b> (@Model.Author.Name)</div>
+                                }
+                            }
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="10">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="col-md-12" style="padding-top: 1em;">
+                        <div><strong>Описание:</strong></div>
+                        <div>
+                            @Html.TextAreaFor(model => Model.Desc, 3, 1,
+                                new { @class = "form-control", style = "margin: 0.2em;", placeholder = "Краткое описание" })
+                            @Html.ValidationMessageFor(model => model.Desc)
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div><strong>Подробное описание:</strong></div>
+                        <div>
+                            @Html.TextAreaFor(model => Model.FullDesc, 4, 1,
+                                new { @class = "form-control", style = "margin: 0.2em;", placeholder = "Полное описание" })
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div><strong>Инструкции:</strong></div>
+                        <div>
+                            @Html.TextAreaFor(model => Model.Instructions, 4, 1,
+                                new { @class = "form-control", style = "margin: 0.2em;", placeholder = "Дополнительные инструкции" })
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div><strong>Техническое задание:</strong></div>
+                        <div>
+                            @Html.TextBoxFor(model => Model.TechnicalTask,
+                                new { @class = "form-control", style = "margin: 0.2em;", placeholder = "Ссылка на техническое задание" })
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div><strong>Комментарий:</strong></div>
+                        <div>
+                            @Html.TextBox("comment", null,
+                                new { @class = "form-control", style = "margin: 0.2em;", placeholder = "Ваш комментарий" })
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-md-offset-6" style="padding-top: 1em;">
+                        <input type="submit" value="Повторное согласование" name="reapprove" class="form-control btn btn-default input-sm" style="margin: 0.2em;" />
+                        @Html.ActionLink("На главную", "Index", null, new { @class = "form-control btn btn-default input-sm", style = "margin: 0.2em;" })
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
+}

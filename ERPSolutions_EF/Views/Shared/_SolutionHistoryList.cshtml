@@ -1,0 +1,47 @@
+﻿@model IEnumerable<ERPSolutions_EF.Models.Ticket>
+
+@if (Model != null)
+{
+    <h5 class="text-primary">История заявок по номеру решения: <b>@Model.Count()</b> шт.</h5>
+
+    <table class="table" style="color: gray;">
+        <tr>
+            <th>Класс</th>
+            <th>Действие</th>
+            <th>Ресурс</th>
+            <th>Решение</th>
+            <th>Краткое описание</th>
+            <th>Тестировщик</th>
+            <th>Создано</th>
+            <th>Согласовано</th>
+            <th>Выполнено</th>
+            <th>Автор</th>
+            <th>Согласующий</th>
+            <th>Исполнитель</th>
+            <th>Статус</th>
+        </tr>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => item.Priority.Literal)</td>
+                <td>@Html.DisplayFor(modelItem => item.Operation.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.Resource.Title)</td>
+                <td>@Html.DisplayFor(modelItem => item.Solutions)</td>
+                <td>@Html.DisplayFor(modelItem => item.Desc)</td>
+                <td>@Html.DisplayFor(modelItem => item.Tester.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Created)</td>
+                <td>@Html.DisplayFor(modelItem => item.Approved)</td>
+                <td>@Html.DisplayFor(modelItem => item.Performed)</td>
+                <td>@Html.DisplayFor(modelItem => item.Author.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Approver.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Performer.Name)</td>
+                <td>@Html.DisplayFor(modelItem => item.Status.Title)</td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <h5 class="text-danger">История по номеру решения отсутствует</h5>
+}
+

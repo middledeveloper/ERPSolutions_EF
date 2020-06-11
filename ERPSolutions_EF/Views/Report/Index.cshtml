@@ -1,0 +1,64 @@
+﻿@model ERPSolutions_EF.ViewModels.ReportViewModel
+
+@{
+    ViewBag.Title = "Отчетность";
+    Layout = "~/Views/Shared/Layout.cshtml";
+}
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/moment-with-locales.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/bootstrap-datetimepicker.min.js")"></script>
+<script type="text/javascript" src="@Url.Content("~/Scripts/datepicker.js")"></script>
+<link type="text/css" rel="stylesheet" href="@Url.Content("~/Styles/bootstrap-datetimepicker.css")">
+
+<div class="col-md-10 col-md-offset-1">
+    <h4 class="text-primary">Отчет за период</h4>
+    @using (Html.BeginForm("GeneratePeriodReport", "Report", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <table class="table">
+            <tr>
+                <td class="col-md-4" style="border: none;">
+                    @Html.TextBoxFor(x => x.PeriodStart, new { @class = "form-control datepicker" })
+                    @Html.ValidationMessageFor(model => model.PeriodStart)
+                </td>
+                <td class="col-md-4" style="border: none;">
+                    @Html.TextBoxFor(x => x.PeriodEnd, new { @class = "form-control datepicker" })
+                </td>
+                <td class="col-md-2" style="border: none;">
+                    <input type="submit" value="Выгрузить" name="excel" class="btn btn-default form-control" />
+                </td>
+                <td class="col-md-2" style="border: none;">
+                    <input type="submit" value="Отобразить" name="screen" class="btn btn-default form-control" />
+                </td>
+            </tr>
+        </table>
+    }
+
+    <h4 class="text-primary">Отчет по номеру решения</h4>
+    @using (Html.BeginForm("GenerateSolutionReport", "Report", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <table class="table">
+            <tr>
+                <td class="col-md-8" style="border: none;">
+                    @Html.TextBoxFor(x => x.SolutionNumber, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.SolutionNumber)
+                </td>
+                <td class="col-md-2" style="border: none;">
+                    <input type="submit" value="Выгрузить" name="excel" class="btn btn-default form-control" />
+                </td>
+                <td class="col-md-2" style="border: none;">
+                    <input type="submit" value="Отобразить" class="btn btn-default form-control" />
+                </td>
+            </tr>
+        </table>
+    }
+
+    <dev>
+        @{Html.RenderAction("ReportTicketList", "Report", new { tickets = Model.Tickets });}
+    </dev>
+</div>
+
+<script type="text/javascript" src="@Url.Content("~/Scripts/active-icons.js")"></script>

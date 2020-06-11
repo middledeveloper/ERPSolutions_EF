@@ -1,0 +1,91 @@
+﻿@model IEnumerable<ERPSolutions_EF.ViewModels.PermissionsViewModel>
+
+@{
+    ViewBag.Title = "Настройка пользователей";
+    Layout = "~/Views/Shared/Layout.cshtml";
+}
+
+<h4 class="text-primary">Настройка пользователей</h4>
+
+@Html.ActionLink("Добавить новую запись +", "AddEmployee", "Settings")
+
+<table class="table small">
+    <tr>
+        <th class="col-md-2">Учетная запись</th>
+        <th class="col-md-2">ФИО</th>
+        <th class="text-center col-md-1">Административная рассылка</th>
+        <th class="text-center col-md-1">Инициатор</th>
+        <th class="text-center col-md-1">Тестировщик</th>
+        <th class="text-center col-md-2">Согласующий</th>
+        <th class="text-center col-md-2">Исполнитель</th>
+        <th class="text-center col-md-1">Администратор</th>
+        <th col-md-1></th>
+    </tr>
+
+    @foreach (var emoloyee in Model)
+    {
+        <tr>
+            <td>@Html.DisplayFor(modelItem => emoloyee.Account)</td>
+            <td>@Html.DisplayFor(modelItem => emoloyee.Name)</td>
+            <td class="text-center">
+                @if (emoloyee.SendMail)
+                {
+                    <span class="glyphicon glyphicon-ok text-info"></span>
+                }
+            </td>
+            <td class="text-center">
+                @if (emoloyee.Author)
+                {
+                    <span class="glyphicon glyphicon-ok text-success"></span>
+                }
+            </td>
+            <td class="text-center">
+                @if (emoloyee.Tester)
+                {
+                    <span class="glyphicon glyphicon-ok text-success"></span>
+                }
+            </td>
+            <td class="text-center">
+                @if (emoloyee.Approver)
+                {
+                    <span class="glyphicon glyphicon-ok text-success"></span><br />
+                    foreach (var res in emoloyee.ApproveResources)
+                    {
+                        <span>@res.Title</span>
+                        if (res != emoloyee.ApproveResources.Last())
+                        {
+                            <br />
+                        }
+                    }
+                }
+            </td>
+            <td class="text-center">
+                @if (emoloyee.Performer)
+                {
+                    <span class="glyphicon glyphicon-ok text-success"></span><br />
+                    foreach (var resource in emoloyee.PerformResources)
+                    {
+                        <span style="font-size: 8pt;">@resource.Title</span>
+                        if (resource != emoloyee.PerformResources.Last())
+                        {
+                            <br />
+                        }
+                    }
+                }
+            </td>
+            <td class="text-center">
+                @if (emoloyee.Administrator)
+                {
+                    <span class="glyphicon glyphicon-ok text-success"></span>
+                }
+            </td>
+            <td class="text-center">
+                @using (@Html.BeginForm("EditEmployee", "Settings", new { id = emoloyee.Id }, FormMethod.Post))
+                {
+                    <input type="submit" value="Управление" class="btn btn-default input-sm form-control" />
+                }
+            </td>
+        </tr>
+    }
+
+</table>

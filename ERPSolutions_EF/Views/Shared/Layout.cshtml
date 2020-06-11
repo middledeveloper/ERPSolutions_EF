@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width" />
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery-1.10.2.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/jquery.unobtrusive-ajax.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>
+    <link type="text/css" rel="stylesheet" href="@Url.Content("~/Styles/bootstrap.css")">
+    <link type="text/css" rel="stylesheet" href="@Url.Content("~/Styles/bootstrap-theme.css")">
+    <link type="text/css" rel="stylesheet" href="@Url.Content("~/Styles/Style.css")">
+    <title>Журнал установок решений: @ViewBag.Title</title>
+</head>
+<body>
+    <div class="col-md-12 col-sm-12 col-lg-12" style="margin-top: 20px;">
+        <div class="text-left col-sm-4 col-md-4 col-lg-4" >
+            <a href="@Url.Action("Index", "Home")"><img src="@Url.Content("~/logo.png")" width="250" /></a>
+        </div>
+        <div class="text-right col-md-8 col-sm-8 col-lg-8">
+            <div class="h3" style="font-weight: bold;">Журнал установок решений</div>
+        </div>
+    </div>
+
+    <div class="col-sm-12 col-md-12 col-lg-12" style="padding-top: 10pt;">
+        <div class="col-sm-12 col-md-12 col-lg-12 text-right">
+            @{Html.RenderAction("Initiate", "Button");}
+            @{Html.RenderAction("Approve", "Button");}
+            @{Html.RenderAction("Perform", "Button");}
+            @{Html.RenderAction("Report", "Button");}
+            @{Html.RenderAction("Settings", "Button");}
+        </div>
+        <div class="text-left col-sm-12 col-md-12 col-lg-12" style="margin-top: 20px;">
+            @RenderBody()
+        </div>
+    </div>
+
+    <div class="col-md-12 col-sm-12 col-lg-12 text-right">
+        <div style="margin-right: 50px; padding-bottom: 50px; padding-top: 50px;">
+            <small>
+                Диспетчер ИТ
+                <span class="glyphicon glyphicon-envelope text-info"></span>
+                <a href="mailto:sd@domain.ru">sd@domain.ru</a>
+                <span class="glyphicon glyphicon-phone-alt text-success"></span>
+                <b>0000</b><br />
+                <kbd style="background-color: #1f3b4b;">Организация</kbd> 2019 - @DateTime.Now.Year
+            </small>
+        </div>
+    </div>
+</body>
+</html>
